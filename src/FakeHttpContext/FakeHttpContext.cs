@@ -42,6 +42,13 @@ namespace FakeHttpContext
                     CallingConventions.Standard,
                     new[] { typeof(HttpSessionStateContainer) },
                     null).Invoke(new object[] { sessionContainer });
+            InitializeApplication();
+        }
+        private static void InitializeApplication()
+        {
+            Type appFactoryType = Type.GetType("System.Web.HttpApplicationFactory, System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+            object appFactory = ReflectionHelper.GetStaticFieldValue<object>("_theApplicationFactory", appFactoryType);
+            ReflectionHelper.SetPrivateInstanceFieldValue("_state", appFactory, HttpContext.Current.Application);
         }
 
         public string UserAgent
